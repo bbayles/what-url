@@ -1,0 +1,13 @@
+[tool.black]
+line-length = 88
+target-version = ['py38']
+skip-string-normalization = true
+
+[tool.ruff]
+select = ["E", "F"]
+line-length = 88
+target-version = "py39"
+exclude = [
+    ".git",
+    ".ruff_cache",
+]
