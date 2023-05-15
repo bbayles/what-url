@@ -1,7 +1,7 @@
-from setuptools import Distribution, setup
+from setuptools import setup
 
-class ExtensionDistribution(Distribution):
-    def has_ext_modules(*args, **kwargs):
-        return True
-
-setup(distclass=ExtensionDistribution)
+setup(
+    cffi_modules=[
+        "./what_url/ada_build.py:ffi_builder",
+    ],
+)

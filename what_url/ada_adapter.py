@@ -21,15 +21,33 @@ def _get_str(c_value):
 def check_url(s):
     """
     Returns ``True`` if *s* represents a valid URL, and ``False`` otherwise.
+
+    .. code-block:: python
+
+        >>> from what_url import check_url
+        >>> check_url('bogus')
+        False
+        >>> check_url('http://a/b/c/d;p?q')
+        True
+
     """
     s_bytes = s.encode('utf-8')
-    return lib.ada_is_valid(s_bytes, len(s_bytes))
+    ada_url = lib.ada_parse(s_bytes, len(s_bytes))
+    return lib.ada_is_valid(ada_url)
 
 
 def join_url(base_url, s):
     """
     Return the URL that results from joining *base_url* to *s*.
     Raises ``ValueError`` if no valid URL can be constructed.
+
+    .. code-block:: python
+
+        >>> from what_url import join_url
+        >>> base_url = 'http://a/b/c/d;p?q'
+        >>> join_url(base_url, '../g')
+        'http://a/b/g'
+
     """
     base_bytes = base_url.encode('utf-8')
     s_bytes = s.encode('utf-8')
@@ -48,6 +66,13 @@ def join_url(base_url, s):
 def normalize_url(s):
     """
     Returns a "normalized" URL with all ``'..'`` and ``'/'`` characters resolved.
+
+    .. code-block:: python
+
+        >>> from what_url import normalize_url
+        >>> normalize_url('http://a/b/c/../g')
+        'http://a/b/g'
+
     """
     return parse_url(s)['href']
 
@@ -57,18 +82,28 @@ def parse_url(s):
     Returns a dictionary with the parsed components of the URL represented by *s*.
 
     For the URL ``'https://user_1:password_1@example.org:8080/dir/../api?q=1#frag'``,
-    the dictionary will have:
 
-    * ``href`` -  ``'https://user_1:password_1@example.org:8080/api?q=1#frag'``
-    * ``username`` - ``'user_1'``
-    * ``password`` - ``'password_1'``
-    * ``protocol`` - ``'https:'``
-    * ``host`` - ``'example.org:8080'``
-    * ``port`` - ``'8080'``
-    * ``hostname`` - ``'example.org'``
-    * ``pathname`` - ``'/dir/api'``
-    * ``search`` - ``'?q=1'``
-    * ``hash`` - ``'frag'``
+    .. code-block:: python
+
+        >>> from what_url import parse_url
+        >>> url = 'https://user_1:password_1@example.org:8080/dir/../api?q=1#frag'
+        >>> parse_url(url)
+        {
+            'href': 'https://user_1:password_1@example.org:8080/api?q=1#frag',
+            'username': 'user_1',
+            'password': 'password_1',
+            'protocol': 'https:',
+            'host': 'example.org:8080',
+            'port': '8080',
+            'hostname': 'example.org',
+            'pathname': '/api',
+            'search': '?q=1',
+            'hash': '#frag'
+        }
+    
+    The names of the dictionary keys correspond to the components of the "URL class"
+    in the WHATWG URL spec.
+
     """
     s_bytes = s.encode('utf-8')
     ada_url = lib.ada_parse(s_bytes, len(s_bytes))
@@ -92,6 +127,14 @@ def replace_url(s, **kwargs):
     mapping, and return a normalized URL with the result.
 
     Raises ``ValueError`` if the input URL or one of the components is not valid.
+    
+    .. code-block:: python
+
+        >>> from what_url import replace_url
+        >>> base_url = 'https://user_1:password_1@example.org/resource'
+        >>> replace_url(base_url, username='user_2', protocol='http:')
+        'http://user_2:password_1@example.org/resource'
+
     """
     s_bytes = s.encode('utf-8')
     ada_url = lib.ada_parse(s_bytes, len(s_bytes))
