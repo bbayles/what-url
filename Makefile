@@ -24,6 +24,14 @@ test:
 docs:
 	sphinx-build -W -b html docs docs/_build/html
 
+.PHONY: clean
+clean:
+	rm -rf _build/
+	rm -rf _dist/
+	rm -rf what_url.egg-info/
+	rm -f what_url/_ada_wrapper.abi3.so
+	rm -f what_url/ada.o
+
 .PHONY: package
 package:
 	c++ -c "what_url/ada.cpp" -std="c++17" -o "what_url/ada.o"

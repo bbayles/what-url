@@ -14,8 +14,9 @@ URL_ATTRIBUTES = (
 )
 
 
-def _get_str(c_value):
-    return ffi.string(c_value.data, c_value.length).decode('utf-8')
+def _get_str(x):
+    ret = ffi.string(x.data, x.length).decode('utf-8') if x.length else ''
+    return ret
 
 
 def check_url(s):
@@ -31,9 +32,16 @@ def check_url(s):
         True
 
     """
-    s_bytes = s.encode('utf-8')
+    try:
+        s_bytes = s.encode('utf-8')
+    except Exception:
+        return False
+
     ada_url = lib.ada_parse(s_bytes, len(s_bytes))
-    return lib.ada_is_valid(ada_url)
+    try:
+        return lib.ada_is_valid(ada_url)
+    finally:
+        lib.ada_free(ada_url)
 
 
 def join_url(base_url, s):
@@ -49,8 +57,12 @@ def join_url(base_url, s):
         'http://a/b/g'
 
     """
-    base_bytes = base_url.encode('utf-8')
-    s_bytes = s.encode('utf-8')
+    try:
+        base_bytes = base_url.encode('utf-8')
+        s_bytes = s.encode('utf-8')
+    except Exception:
+        raise ValueError('Invalid URL') from None
+
     ada_url = lib.ada_parse_with_base(
         s_bytes, len(s_bytes), base_bytes, len(base_bytes)
     )
@@ -74,14 +86,12 @@ def normalize_url(s):
         'http://a/b/g'
 
     """
-    return parse_url(s)['href']
+    return parse_url(s, attributes=('href',))['href']
 
 
-def parse_url(s):
+def parse_url(s, attributes=URL_ATTRIBUTES):
     """
     Returns a dictionary with the parsed components of the URL represented by *s*.
-
-    For the URL ``'https://user_1:password_1@example.org:8080/dir/../api?q=1#frag'``,
 
     .. code-block:: python
 
@@ -100,19 +110,34 @@ def parse_url(s):
             'search': '?q=1',
             'hash': '#frag'
         }
-    
+
     The names of the dictionary keys correspond to the components of the "URL class"
     in the WHATWG URL spec.
 
+    Pass in a sequence of *attributes* to limit which keys are returned.
+
+    .. code-block:: python
+
+        >>> from what_url import parse_url
+        >>> url = 'https://user_1:password_1@example.org:8080/dir/../api?q=1#frag'
+        >>> parse_url(url, attributes=('protocol'))
+        {'protocol': 'https:'}
+
+    Unrecognized attributes are ignored.
+
     """
-    s_bytes = s.encode('utf-8')
-    ada_url = lib.ada_parse(s_bytes, len(s_bytes))
+    try:
+        s_bytes = s.encode('utf-8')
+    except Exception:
+        raise ValueError('Invalid URL') from None
+
     ret = {}
+    ada_url = lib.ada_parse(s_bytes, len(s_bytes))
     try:
         if not lib.ada_is_valid(ada_url):
             raise ValueError('Invalid URL') from None
 
-        for attr in URL_ATTRIBUTES:
+        for attr in attributes:
             get_func = getattr(lib, f'ada_get_{attr}')
             ret[attr] = _get_str(get_func(ada_url))
     finally:
@@ -123,11 +148,11 @@ def parse_url(s):
 
 def replace_url(s, **kwargs):
     """
-    Start with the URL represented by *s*, replace the components given in the *kwargs*
+    Start with the URL represented by *s*, replace the attributes given in the *kwargs*
     mapping, and return a normalized URL with the result.
 
     Raises ``ValueError`` if the input URL or one of the components is not valid.
-    
+
     .. code-block:: python
 
         >>> from what_url import replace_url
@@ -135,8 +160,14 @@ def replace_url(s, **kwargs):
         >>> replace_url(base_url, username='user_2', protocol='http:')
         'http://user_2:password_1@example.org/resource'
 
+    Unrecognized attributes are ignored.
+
     """
-    s_bytes = s.encode('utf-8')
+    try:
+        s_bytes = s.encode('utf-8')
+    except Exception:
+        raise ValueError('Invalid URL') from None
+
     ada_url = lib.ada_parse(s_bytes, len(s_bytes))
     try:
         if not lib.ada_is_valid(ada_url):
@@ -147,8 +178,12 @@ def replace_url(s, **kwargs):
             if not value:
                 continue
 
+            try:
+                value_bytes = value.encode()
+            except Exception:
+                raise ValueError(f'Invalid value for {attr}') from None
+
             set_func = getattr(lib, f'ada_set_{attr}')
-            value_bytes = value.encode()
             set_result = set_func(ada_url, value_bytes, len(value_bytes))
             if (set_result is not None) and (not set_result):
                 raise ValueError(f'Invalid value for {attr}') from None
