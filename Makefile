@@ -26,5 +26,7 @@ docs:
 
 .PHONY: package
 package:
-	python setup.py sdist bdist_wheel
+	c++ -c "what_url/ada-url/ada.cpp" -std="c++17" -o "what_url/ada-url/ada.o"
+	python what_url/ada_build.py
+	python setup.py bdist_wheel
 	twine check dist/*
