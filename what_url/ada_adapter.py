@@ -12,6 +12,7 @@ URL_ATTRIBUTES = (
     'search',
     'hash',
 )
+PARSE_ATTRIBUTES = URL_ATTRIBUTES + ('origin',)
 
 
 def _get_str(x):
@@ -89,7 +90,7 @@ def normalize_url(s):
     return parse_url(s, attributes=('href',))['href']
 
 
-def parse_url(s, attributes=URL_ATTRIBUTES):
+def parse_url(s, attributes=PARSE_ATTRIBUTES):
     """
     Returns a dictionary with the parsed components of the URL represented by *s*.
 
@@ -109,6 +110,7 @@ def parse_url(s, attributes=URL_ATTRIBUTES):
             'pathname': '/api',
             'search': '?q=1',
             'hash': '#frag'
+            'origin': 'https://example.org:8080'
         }
 
     The names of the dictionary keys correspond to the components of the "URL class"
@@ -139,7 +141,10 @@ def parse_url(s, attributes=URL_ATTRIBUTES):
 
         for attr in attributes:
             get_func = getattr(lib, f'ada_get_{attr}')
-            ret[attr] = _get_str(get_func(ada_url))
+            data = get_func(ada_url)
+            ret[attr] = _get_str(data)
+            if attr == 'origin':
+                lib.ada_free_owned_string(data)
     finally:
         lib.ada_free(ada_url)
 

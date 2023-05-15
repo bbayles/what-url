@@ -131,6 +131,7 @@ class WhatURLTests(TestCase):
             'pathname': '/api',
             'search': '?q=1',
             'hash': '#frag',
+            'origin': 'https://example.org:8080',
         }
         self.assertEqual(actual, expected)
 
