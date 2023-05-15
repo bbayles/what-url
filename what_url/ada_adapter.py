@@ -5,9 +5,9 @@ URL_ATTRIBUTES = (
     'username',
     'password',
     'protocol',
-    'host',
     'port',
     'hostname',
+    'host',
     'pathname',
     'search',
     'hash',
@@ -165,7 +165,8 @@ def replace_url(s, **kwargs):
         >>> replace_url(base_url, username='user_2', protocol='http:')
         'http://user_2:password_1@example.org/resource'
 
-    Unrecognized attributes are ignored.
+    Unrecognized attributes are ignored. ``href`` is replaced first if it is given.
+    ``hostname`` is replaced before ``host`` if both are given.
 
     """
     try:

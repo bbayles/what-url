@@ -155,6 +155,7 @@ class WhatURLTests(TestCase):
                 'https://user:pass@www.example.org/yolo.txt?q=1#2',
             ),
             ({'protocol': 'http:'}, 'http://www.example.org/yolo.txt?q=1#2'),
+            ({'protocol': 'http'}, 'http://www.example.org/yolo.txt?q=1#2'),
             ({'port': '80'}, 'https://www.example.org:80/yolo.txt?q=1#2'),
             ({'host': 'www.example.com'}, 'https://www.example.com/yolo.txt?q=1#2'),
             ({'hostname': 'example.com'}, 'https://example.com/yolo.txt?q=1#2'),
@@ -164,6 +165,21 @@ class WhatURLTests(TestCase):
             with self.subTest(kwargs=kwargs):
                 actual = replace_url(s, **kwargs)
                 self.assertEqual(actual, expected)
+
+    def test_replace_href(self):
+        s = 'https://username:password@www.google.com:8080/'
+        kwargs = {
+            'href': 'https://www.yagiz.co',
+            'hash': 'new-hash',
+            'hostname': 'new-host',
+            'host': 'changed-host:9090',
+            'pathname': 'new-pathname',
+            'search': 'new-search',
+            'protocol': 'wss',
+        }
+        actual = replace_url(s, **kwargs)
+        expected = 'wss://changed-host:9090/new-pathname?new-search#new-hash'
+        self.assertEqual(actual, expected)
 
     def test_replace_url_error(self):
         for s, kwargs in (
