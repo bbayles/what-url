@@ -1,4 +1,4 @@
-/* auto-generated on 2023-05-11 14:00:59 -0400. Do not edit! */
+/* auto-generated on 2023-05-15 12:09:38 -0400. Do not edit! */
 /* begin file include/ada.h */
 /**
  * @file ada.h
@@ -468,6 +468,17 @@ namespace ada {
     if (!(COND)) __builtin_unreachable(); \
   } while (0)
 #endif
+
+#if defined(__SSE2__) || defined(__x86_64__) || defined(__x86_64) || \
+    (defined(_M_AMD64) || defined(_M_X64) ||                         \
+     (defined(_M_IX86_FP) && _M_IX86_FP == 2))
+#define ADA_SSE2 1
+#endif
+
+#if defined(__aarch64__) || defined(_M_ARM64)
+#define ADA_NEON 1
+#endif
+
 #endif  // ADA_COMMON_DEFS_H
 /* end file include/ada/common_defs.h */
 #include <stdint.h>
@@ -4320,7 +4331,7 @@ std::string to_unicode(std::string_view input);
  * @attention The has_tabs_or_newline function is a bottleneck and it is simple
  * enough that compilers like GCC can 'autovectorize it'.
  */
-ada_really_inline constexpr bool has_tabs_or_newline(
+ada_really_inline bool has_tabs_or_newline(
     std::string_view user_input) noexcept;
 
 /**
