@@ -1,11 +1,11 @@
 from cffi import FFI
 from os.path import dirname, join
 
-ffi_dir = join(dirname(__file__), 'ffi')
+ffi_dir = join(dirname(__file__), 'ada-url')
 
 ffi_builder = FFI()
 ffi_builder.set_source(
-    '_ada_cffi_wrapper',
+    '_ada_wrapper',
     '# include "ada_c.h"',
     include_dirs=[ffi_dir],
     extra_objects=[join(ffi_dir, 'ada.o')],

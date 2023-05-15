@@ -1,4 +1,4 @@
-from ada_cffi._ada_cffi_wrapper import ffi, lib
+from what_url._ada_wrapper import ffi, lib
 
 URL_ATTRIBUTES = (
     'href',
@@ -23,7 +23,7 @@ def check_url(s):
     Returns ``True`` if *s* represents a valid URL, and ``False`` otherwise.
     """
     s_bytes = s.encode('utf-8')
-    return lib.ada_is_valid(s_bytes, len(s_bytes))  
+    return lib.ada_is_valid(s_bytes, len(s_bytes))
 
 
 def join_url(base_url, s):
@@ -39,7 +39,7 @@ def join_url(base_url, s):
     try:
         if not lib.ada_is_valid(ada_url):
             raise ValueError('Invalid URL') from None
-        
+
         return _get_str(lib.ada_get_href(ada_url))
     finally:
         lib.ada_free(ada_url)
@@ -55,7 +55,7 @@ def normalize_url(s):
 def parse_url(s):
     """
     Returns a dictionary with the parsed components of the URL represented by *s*.
-    
+
     For the URL ``'https://user_1:password_1@example.org:8080/dir/../api?q=1#frag'``,
     the dictionary will have:
 
@@ -76,13 +76,13 @@ def parse_url(s):
     try:
         if not lib.ada_is_valid(ada_url):
             raise ValueError('Invalid URL') from None
-        
+
         for attr in URL_ATTRIBUTES:
             get_func = getattr(lib, f'ada_get_{attr}')
             ret[attr] = _get_str(get_func(ada_url))
     finally:
         lib.ada_free(ada_url)
-    
+
     return ret
 
 
@@ -90,7 +90,7 @@ def replace_url(s, **kwargs):
     """
     Start with the URL represented by *s*, replace the components given in the *kwargs*
     mapping, and return a normalized URL with the result.
-    
+
     Raises ``ValueError`` if the input URL or one of the components is not valid.
     """
     s_bytes = s.encode('utf-8')
@@ -98,7 +98,7 @@ def replace_url(s, **kwargs):
     try:
         if not lib.ada_is_valid(ada_url):
             raise ValueError('Invalid URL') from None
-        
+
         for attr in URL_ATTRIBUTES:
             value = kwargs.get(attr)
             if not value:
@@ -109,7 +109,7 @@ def replace_url(s, **kwargs):
             set_result = set_func(ada_url, value_bytes, len(value_bytes))
             if (set_result is not None) and (not set_result):
                 raise ValueError(f'Invalid value for {attr}') from None
-            
+
         return _get_str(lib.ada_get_href(ada_url))
     finally:
         lib.ada_free(ada_url)

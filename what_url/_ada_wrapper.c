@@ -2529,7 +2529,7 @@ static const struct _cffi_type_context_s _cffi_type_context = {
 
 #ifdef PYPY_VERSION
 PyMODINIT_FUNC
-_cffi_pypyinit__ada_cffi_wrapper(const void *p[])
+_cffi_pypyinit__ada_wrapper(const void *p[])
 {
     p[0] = (const void *)0x2601;
     p[1] = &_cffi_type_context;
@@ -2540,22 +2540,22 @@ _cffi_pypyinit__ada_cffi_wrapper(const void *p[])
 #  ifdef _MSC_VER
      PyMODINIT_FUNC
 #  if PY_MAJOR_VERSION >= 3
-     PyInit__ada_cffi_wrapper(void) { return NULL; }
+     PyInit__ada_wrapper(void) { return NULL; }
 #  else
-     init_ada_cffi_wrapper(void) { }
+     init_ada_wrapper(void) { }
 #  endif
 #  endif
 #elif PY_MAJOR_VERSION >= 3
 PyMODINIT_FUNC
-PyInit__ada_cffi_wrapper(void)
+PyInit__ada_wrapper(void)
 {
-  return _cffi_init("_ada_cffi_wrapper", 0x2601, &_cffi_type_context);
+  return _cffi_init("_ada_wrapper", 0x2601, &_cffi_type_context);
 }
 #else
 PyMODINIT_FUNC
-init_ada_cffi_wrapper(void)
+init_ada_wrapper(void)
 {
-  _cffi_init("_ada_cffi_wrapper", 0x2601, &_cffi_type_context);
+  _cffi_init("_ada_wrapper", 0x2601, &_cffi_type_context);
 }
 #endif
 
