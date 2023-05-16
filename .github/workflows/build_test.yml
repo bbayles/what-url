@@ -25,8 +25,14 @@ jobs:
       run: |
         make check
     - name: Build packages
+      if: "matrix.os != 'windows-latest'"
       run: |
         make package
+    - name: Build packages (Windows)
+      if: "matrix.os == 'windows-latest'"
+      run: |
+        cl /c "what_url/ada.cpp" /std:c++17 /Fo "what_url/ada.o"
+        python -m build --no-isolation
     - name: Run tests
       run: |
         pip install -e .
