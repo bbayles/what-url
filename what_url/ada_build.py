@@ -8,6 +8,7 @@ ffi_builder.set_source(
     'what_url._ada_wrapper',
     '# include "ada_c.h"',
     include_dirs=[file_dir],
+    libraries=['stdc++'],
     extra_objects=[join(file_dir, 'ada.o')],
 )
 
