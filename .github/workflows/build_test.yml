@@ -27,14 +27,14 @@ jobs:
     - name: Build packages
       run: |
         make package
-    - name: Build docs with sphinx
-      if: "matrix.python == '3.8'"
-      run: |
-        make docs
     - name: Run tests
       run: |
         pip install -e .
         make coverage
+    - name: Build docs with sphinx
+      if: "matrix.python == '3.8'"
+      run: |
+        make docs
     - name: Upload packages
       uses: actions/upload-artifact@v3
       with:
