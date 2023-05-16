@@ -25,13 +25,16 @@ jobs:
       if: "matrix.python == '3.8'"
       run: |
         make check
+    - name: Build packages
+      run: |
+        make package
     - name: Build docs with sphinx
       if: "matrix.python == '3.8'"
       run: |
         make docs
-    - name: Build packages
+    - name: Run tests
       run: |
-        make package
+        make coverage
     - name: Upload packages
       uses: actions/upload-artifact@v3
       with:
