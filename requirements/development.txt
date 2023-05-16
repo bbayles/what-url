@@ -1,10 +1,13 @@
 # What we want
+build==0.10.0
 black==23.3.0
 cffi==1.15.1
 coverage==7.2.5
 ruff==0.0.267
-twine==4.0.2
+setuptools==67.7.2
 Sphinx==7.0.0
+twine==4.0.2
+wheel==0.40.0
 
 # What we need
 alabaster==0.7.13
@@ -30,6 +33,7 @@ pathspec==0.11.1
 pkginfo==1.9.6
 platformdirs==3.5.1
 pycparser==2.21
+pyproject_hooks==1.0.0
 Pygments==2.15.1
 readme-renderer==37.3
 requests==2.30.0

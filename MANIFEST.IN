@@ -1,6 +1,0 @@
-include what_url/*.o
-include what_url/*.so
-include what_url/*.cpp
-include what_url/*.c
-include what_url/*.h
-include what_url/_ada_wrapper*
