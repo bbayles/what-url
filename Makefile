@@ -34,6 +34,6 @@ clean:
 
 .PHONY: package
 package:
-	c++ -c "what_url/ada.cpp" -std="c++17" -o "what_url/ada.o"
+	c++ -c "what_url/ada.cpp" -fPIC -std="c++17" -o "what_url/ada.o"
 	python -m build --no-isolation
 	twine check dist/*

@@ -33,6 +33,7 @@ jobs:
         make docs
     - name: Run tests
       run: |
+        pip install -e .
         make coverage
     - name: Upload packages
       uses: actions/upload-artifact@v3
