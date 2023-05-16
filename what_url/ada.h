@@ -1,4 +1,4 @@
-/* auto-generated on 2023-05-15 12:09:38 -0400. Do not edit! */
+/* auto-generated on 2023-05-16 13:48:47 -0400. Do not edit! */
 /* begin file include/ada.h */
 /**
  * @file ada.h
@@ -6484,14 +6484,14 @@ inline std::ostream &operator<<(std::ostream &out,
 #ifndef ADA_ADA_VERSION_H
 #define ADA_ADA_VERSION_H
 
-#define ADA_VERSION "2.4.0"
+#define ADA_VERSION "2.4.1"
 
 namespace ada {
 
 enum {
   ADA_VERSION_MAJOR = 2,
   ADA_VERSION_MINOR = 4,
-  ADA_VERSION_REVISION = 0,
+  ADA_VERSION_REVISION = 1,
 };
 
 }  // namespace ada
