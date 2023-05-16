@@ -19,7 +19,6 @@ jobs:
         python-version: ${{ matrix.python }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
         make requirements
     - name: Static analysis
       if: "matrix.python == '3.8'"
