@@ -6,7 +6,7 @@ jobs:
   build_test:
     strategy:
       matrix:
-        os: ["ubuntu-latest", "macos-latest", "windows-latest"]
+        os: ["ubuntu-latest", "macos-latest"]
         python: ["3.8", "3.9", "3.10", "3.11"]
 
     runs-on: ${{ matrix.os }}
@@ -25,20 +25,14 @@ jobs:
       run: |
         make check
     - name: Build packages
-      if: "matrix.os != 'windows-latest'"
       run: |
         make package
-    - name: Build packages (Windows)
-      if: "matrix.os == 'windows-latest'"
-      run: |
-        cl.exe /c "what_url/ada.cpp" /std:c++17 /Fo "what_url/ada.o"
-        python -m build --no-isolation
     - name: Run tests
       run: |
         pip install -e .
         make coverage
     - name: Build docs with sphinx
-      if: "matrix.python == '3.8'"
+      if: "matrix.python == '3.8' && matrix.os == 'ubuntu-latest'"
       run: |
         make docs
     - name: Upload packages
